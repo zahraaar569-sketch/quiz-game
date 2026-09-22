@@ -1,0 +1,1054 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quiz Teknologi & AI</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+    }
+
+    body {
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 700px;
+      background: white;
+      border-radius: 20px;
+      padding: 25px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+    }
+
+    .screen {
+      display: none;
+    }
+
+    .screen.active {
+      display: block;
+    }
+
+    h1 {
+      text-align: center;
+      color: #4f46e5;
+      margin-bottom: 15px;
+    }
+
+    h2 {
+      color: #333;
+      margin-bottom: 20px;
+    }
+
+    p {
+      color: #555;
+      line-height: 1.6;
+    }
+
+    .start-box {
+      text-align: center;
+    }
+
+    .start-box p {
+      margin: 15px 0 25px;
+    }
+
+    button {
+      border: none;
+      cursor: pointer;
+      border-radius: 10px;
+      padding: 13px 20px;
+      font-size: 16px;
+      font-weight: bold;
+      transition: 0.2s;
+    }
+
+    .start-btn,
+    .next-btn,
+    .restart-btn {
+      background: #4f46e5;
+      color: white;
+    }
+
+    button:hover {
+      transform: scale(1.03);
+      opacity: 0.9;
+    }
+
+    button:disabled {
+      cursor: not-allowed;
+      opacity: 0.7;
+      transform: none;
+    }
+
+    .top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+      gap: 10px;
+    }
+
+    .question-number {
+      font-weight: bold;
+      color: #4f46e5;
+    }
+
+    .timer {
+      background: #fee2e2;
+      color: #dc2626;
+      padding: 8px 12px;
+      border-radius: 8px;
+      font-weight: bold;
+    }
+
+    .progress-container {
+      width: 100%;
+      height: 10px;
+      background: #e5e7eb;
+      border-radius: 10px;
+      margin-bottom: 25px;
+      overflow: hidden;
+    }
+
+    .progress-bar {
+      height: 100%;
+      width: 0%;
+      background: #4f46e5;
+      transition: width 0.3s;
+    }
+
+    .question {
+      font-size: 20px;
+      font-weight: bold;
+      color: #222;
+      margin-bottom: 20px;
+      line-height: 1.5;
+    }
+
+    .options {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .option {
+      width: 100%;
+      text-align: left;
+      background: #f3f4f6;
+      color: #222;
+      border: 2px solid transparent;
+      padding: 15px;
+      border-radius: 12px;
+      font-weight: normal;
+    }
+
+    .option:hover {
+      background: #e0e7ff;
+      border-color: #6366f1;
+    }
+
+    .option.correct {
+      background: #dcfce7;
+      border-color: #22c55e;
+      color: #166534;
+    }
+
+    .option.wrong {
+      background: #fee2e2;
+      border-color: #ef4444;
+      color: #991b1b;
+    }
+
+    .option:disabled {
+      opacity: 1;
+    }
+
+    .feedback {
+      margin-top: 18px;
+      padding: 12px;
+      border-radius: 10px;
+      display: none;
+      font-weight: bold;
+    }
+
+    .feedback.correct-feedback {
+      display: block;
+      background: #dcfce7;
+      color: #166534;
+    }
+
+    .feedback.wrong-feedback {
+      display: block;
+      background: #fee2e2;
+      color: #991b1b;
+    }
+
+    .next-container {
+      text-align: right;
+      margin-top: 20px;
+    }
+
+    .result-box {
+      text-align: center;
+    }
+
+    .score-circle {
+      width: 150px;
+      height: 150px;
+      border-radius: 50%;
+      background: #4f46e5;
+      color: white;
+      margin: 25px auto;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+    }
+
+    .score-number {
+      font-size: 40px;
+      font-weight: bold;
+    }
+
+    .score-label {
+      font-size: 14px;
+    }
+
+    .result-message {
+      font-size: 20px;
+      font-weight: bold;
+      margin-bottom: 20px;
+    }
+
+    .review {
+      text-align: left;
+      margin-top: 25px;
+    }
+
+    .review-title {
+      margin-bottom: 15px;
+      color: #4f46e5;
+    }
+
+    .review-item {
+      background: #f9fafb;
+      padding: 15px;
+      border-radius: 12px;
+      margin-bottom: 12px;
+      border-left: 5px solid #4f46e5;
+    }
+
+    .review-question {
+      font-weight: bold;
+      margin-bottom: 8px;
+      color: #222;
+    }
+
+    .review-answer {
+      margin-top: 5px;
+      font-size: 14px;
+    }
+
+    .correct-text {
+      color: #16a34a;
+      font-weight: bold;
+    }
+
+    .wrong-text {
+      color: #dc2626;
+      font-weight: bold;
+    }
+
+    .info {
+      background: #eef2ff;
+      padding: 15px;
+      border-radius: 12px;
+      margin: 20px 0;
+      text-align: left;
+    }
+
+    .info li {
+      margin: 7px 0;
+      color: #444;
+    }
+
+    @media (max-width: 600px) {
+      body {
+        padding: 10px;
+      }
+
+      .container {
+        padding: 18px;
+      }
+
+      .question {
+        font-size: 18px;
+      }
+
+      .option {
+        font-size: 14px;
+        padding: 13px;
+      }
+
+      .score-circle {
+        width: 130px;
+        height: 130px;
+      }
+
+      .score-number {
+        font-size: 32px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="container">
+
+  <!-- HALAMAN MULAI -->
+  <div id="startScreen" class="screen active">
+    <div class="start-box">
+
+      <h1>🤖 Quiz Teknologi & AI</h1>
+
+      <p>
+        Uji pengetahuan kamu tentang teknologi dan
+        Artificial Intelligence (AI)!
+      </p>
+
+      <div class="info">
+        <ul>
+          <li>📚 Jumlah soal: <b>15</b></li>
+          <li>🔀 Pilihan jawaban akan diacak</li>
+          <li>🔀 Urutan soal juga diacak</li>
+          <li>⏱️ Waktu setiap soal: <b>30 detik</b></li>
+          <li>🏆 Nilai akan dihitung otomatis</li>
+        </ul>
+      </div>
+
+      <button class="start-btn" onclick="startQuiz()">
+        🚀 Mulai Quiz
+      </button>
+
+    </div>
+  </div>
+
+
+  <!-- HALAMAN QUIZ -->
+  <div id="quizScreen" class="screen">
+
+    <div class="top-bar">
+      <div class="question-number" id="questionNumber">
+        Soal 1 dari 15
+      </div>
+
+      <div class="timer">
+        ⏱️ <span id="timer">30</span> detik
+      </div>
+    </div>
+
+    <div class="progress-container">
+      <div class="progress-bar" id="progressBar"></div>
+    </div>
+
+    <div class="question" id="questionText"></div>
+
+    <div class="options" id="optionsContainer"></div>
+
+    <div id="feedback" class="feedback"></div>
+
+    <div class="next-container">
+      <button
+        id="nextButton"
+        class="next-btn"
+        onclick="nextQuestion()"
+        style="display:none;">
+        Soal Berikutnya ➜
+      </button>
+    </div>
+
+  </div>
+
+
+  <!-- HALAMAN HASIL -->
+  <div id="resultScreen" class="screen">
+
+    <div class="result-box">
+
+      <h1>🎉 Quiz Selesai!</h1>
+
+      <div class="score-circle">
+        <div class="score-number" id="finalScore">0</div>
+        <div class="score-label">Nilai</div>
+      </div>
+
+      <div class="result-message" id="resultMessage"></div>
+
+      <p id="scoreDetail"></p>
+
+      <br>
+
+      <button class="restart-btn" onclick="startQuiz()">
+        🔄 Main Lagi
+      </button>
+
+    </div>
+
+    <div class="review">
+
+      <h2 class="review-title">
+        📋 Review Jawaban
+      </h2>
+
+      <div id="reviewContainer"></div>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+<script>
+
+  // ==========================================
+  // DATA SOAL
+  // ==========================================
+
+  const questions = [
+
+    {
+      question: "Apa kepanjangan dari AI?",
+      options: [
+        { text: "Artificial Intelligence", correct: true },
+        { text: "Automatic Information", correct: false },
+        { text: "Advanced Internet", correct: false },
+        { text: "Artificial Internet", correct: false }
+      ]
+    },
+
+    {
+      question: "Teknologi AI digunakan untuk...",
+      options: [
+        { text: "Membuat komputer tidak bisa bekerja", correct: false },
+        { text: "Membantu komputer melakukan tugas yang membutuhkan kecerdasan manusia", correct: true },
+        { text: "Menghapus semua data", correct: false },
+        { text: "Mematikan internet", correct: false }
+      ]
+    },
+
+    {
+      question: "Contoh penggunaan AI dalam kehidupan sehari-hari adalah...",
+      options: [
+        { text: "Kipas angin biasa", correct: false },
+        { text: "Asisten virtual seperti Siri atau Google Assistant", correct: true },
+        { text: "Pensil", correct: false },
+        { text: "Buku tulis", correct: false }
+      ]
+    },
+
+    {
+      question: "Apa yang dimaksud dengan Machine Learning?",
+      options: [
+        { text: "Mesin yang hanya bisa berjalan", correct: false },
+        { text: "Teknologi untuk membuat robot berjalan", correct: false },
+        { text: "Metode agar komputer dapat belajar dari data", correct: true },
+        { text: "Cara memperbaiki mesin rusak", correct: false }
+      ]
+    },
+
+    {
+      question: "Manakah yang termasuk perangkat keras komputer?",
+      options: [
+        { text: "Keyboard", correct: true },
+        { text: "Microsoft Word", correct: false },
+        { text: "Google Chrome", correct: false },
+        { text: "Windows", correct: false }
+      ]
+    },
+
+    {
+      question: "Perangkat yang digunakan untuk memasukkan teks ke komputer adalah...",
+      options: [
+        { text: "Keyboard", correct: true },
+        { text: "Monitor", correct: false },
+        { text: "Speaker", correct: false },
+        { text: "Printer", correct: false }
+      ]
+    },
+
+    {
+      question: "Internet adalah...",
+      options: [
+        { text: "Jaringan komputer yang saling terhubung di seluruh dunia", correct: true },
+        { text: "Sebuah aplikasi menggambar", correct: false },
+        { text: "Perangkat keras", correct: false },
+        { text: "Sistem operasi", correct: false }
+      ]
+    },
+
+    {
+      question: "Contoh mesin pencari di internet adalah...",
+      options: [
+        { text: "Google", correct: true },
+        { text: "Microsoft Word", correct: false },
+        { text: "Paint", correct: false },
+        { text: "Calculator", correct: false }
+      ]
+    },
+
+    {
+      question: "Apa fungsi utama dari robot?",
+      options: [
+        { text: "Membantu melakukan pekerjaan tertentu", correct: true },
+        { text: "Menggantikan seluruh manusia", correct: false },
+        { text: "Menghapus internet", correct: false },
+        { text: "Membuat komputer rusak", correct: false }
+      ]
+    },
+
+    {
+      question: "Chatbot AI dapat digunakan untuk...",
+      options: [
+        { text: "Menjawab pertanyaan dan membantu pengguna", correct: true },
+        { text: "Mematikan listrik rumah", correct: false },
+        { text: "Menghapus semua aplikasi", correct: false },
+        { text: "Mengganti perangkat keras", correct: false }
+      ]
+    },
+
+    {
+      question: "Apa manfaat teknologi dalam pendidikan?",
+      options: [
+        { text: "Mempermudah mencari informasi dan belajar", correct: true },
+        { text: "Membuat siswa tidak perlu belajar", correct: false },
+        { text: "Menghilangkan semua guru", correct: false },
+        { text: "Membuat sekolah tidak diperlukan", correct: false }
+      ]
+    },
+
+    {
+      question: "Salah satu risiko penggunaan AI adalah...",
+      options: [
+        { text: "Membantu pekerjaan", correct: false },
+        { text: "Mempermudah belajar", correct: false },
+        { text: "Informasi yang diberikan bisa saja tidak benar", correct: true },
+        { text: "Mempercepat pekerjaan", correct: false }
+      ]
+    },
+
+    {
+      question: "Apa yang dimaksud dengan data?",
+      options: [
+        { text: "Kumpulan informasi yang dapat diolah", correct: true },
+        { text: "Sebuah jenis komputer", correct: false },
+        { text: "Nama aplikasi", correct: false },
+        { text: "Sebuah kabel", correct: false }
+      ]
+    },
+
+    {
+      question: "Mengapa kita harus menggunakan teknologi dengan bijak?",
+      options: [
+        { text: "Agar teknologi memberikan manfaat dan tidak disalahgunakan", correct: true },
+        { text: "Agar bisa menggunakan internet sepanjang hari", correct: false },
+        { text: "Agar tidak perlu belajar", correct: false },
+        { text: "Agar semua pekerjaan dilakukan komputer", correct: false }
+      ]
+    },
+
+    {
+      question: "Manakah contoh teknologi komunikasi?",
+      options: [
+        { text: "Smartphone", correct: true },
+        { text: "Kursi", correct: false },
+        { text: "Meja", correct: false },
+        { text: "Pensil", correct: false }
+      ]
+    }
+
+  ];
+
+
+  // ==========================================
+  // VARIABEL GAME
+  // ==========================================
+
+  let quizQuestions = [];
+  let currentQuestion = 0;
+  let score = 0;
+  let userAnswers = [];
+  let timerInterval;
+  let timeLeft = 30;
+
+
+  // ==========================================
+  // FUNGSI ACAK
+  // ==========================================
+
+  function shuffle(array) {
+
+    const newArray = [...array];
+
+    for (let i = newArray.length - 1; i > 0; i--) {
+
+      const randomIndex =
+        Math.floor(Math.random() * (i + 1));
+
+      [newArray[i], newArray[randomIndex]] =
+      [newArray[randomIndex], newArray[i]];
+
+    }
+
+    return newArray;
+  }
+
+
+  // ==========================================
+  // MULAI QUIZ
+  // ==========================================
+
+  function startQuiz() {
+
+    clearInterval(timerInterval);
+
+    score = 0;
+    currentQuestion = 0;
+    userAnswers = [];
+
+    /*
+      Acak urutan soal.
+      Setiap soal juga memiliki pilihan jawaban
+      yang diacak.
+    */
+
+    quizQuestions = shuffle(
+      questions.map(q => ({
+        question: q.question,
+        options: shuffle(q.options)
+      }))
+    );
+
+    showScreen("quizScreen");
+
+    loadQuestion();
+
+  }
+
+
+  // ==========================================
+  // TAMPILKAN HALAMAN
+  // ==========================================
+
+  function showScreen(screenId) {
+
+    document.querySelectorAll(".screen")
+      .forEach(screen => {
+        screen.classList.remove("active");
+      });
+
+    document.getElementById(screenId)
+      .classList.add("active");
+
+  }
+
+
+  // ==========================================
+  // LOAD SOAL
+  // ==========================================
+
+  function loadQuestion() {
+
+    clearInterval(timerInterval);
+
+    const question =
+      quizQuestions[currentQuestion];
+
+    document.getElementById("questionNumber")
+      .textContent =
+      `Soal ${currentQuestion + 1} dari ${quizQuestions.length}`;
+
+    document.getElementById("questionText")
+      .textContent =
+      question.question;
+
+    const progress =
+      ((currentQuestion) / quizQuestions.length) * 100;
+
+    document.getElementById("progressBar")
+      .style.width = progress + "%";
+
+    const optionsContainer =
+      document.getElementById("optionsContainer");
+
+    optionsContainer.innerHTML = "";
+
+    question.options.forEach((option, index) => {
+
+      const button =
+        document.createElement("button");
+
+      button.className = "option";
+
+      button.textContent =
+        `${String.fromCharCode(65 + index)}. ${option.text}`;
+
+      button.onclick = () =>
+        selectAnswer(index);
+
+      optionsContainer.appendChild(button);
+
+    });
+
+
+    document.getElementById("feedback")
+      .className = "feedback";
+
+    document.getElementById("feedback")
+      .textContent = "";
+
+    document.getElementById("nextButton")
+      .style.display = "none";
+
+    startTimer();
+
+  }
+
+
+  // ==========================================
+  // TIMER
+  // ==========================================
+
+  function startTimer() {
+
+    timeLeft = 30;
+
+    document.getElementById("timer")
+      .textContent = timeLeft;
+
+    timerInterval =
+      setInterval(() => {
+
+        timeLeft--;
+
+        document.getElementById("timer")
+          .textContent = timeLeft;
+
+        if (timeLeft <= 0) {
+
+          clearInterval(timerInterval);
+
+          timeUp();
+
+        }
+
+      }, 1000);
+
+  }
+
+
+  // ==========================================
+  // WAKTU HABIS
+  // ==========================================
+
+  function timeUp() {
+
+    const question =
+      quizQuestions[currentQuestion];
+
+    userAnswers[currentQuestion] = null;
+
+    const buttons =
+      document.querySelectorAll(".option");
+
+    buttons.forEach((button, index) => {
+
+      button.disabled = true;
+
+      if (question.options[index].correct) {
+        button.classList.add("correct");
+      }
+
+    });
+
+    const feedback =
+      document.getElementById("feedback");
+
+    feedback.textContent =
+      "⏰ Waktu habis! Jawaban yang benar sudah ditandai.";
+
+    feedback.className =
+      "feedback wrong-feedback";
+
+    document.getElementById("nextButton")
+      .style.display = "inline-block";
+
+  }
+
+
+  // ==========================================
+  // PILIH JAWABAN
+  // ==========================================
+
+  function selectAnswer(selectedIndex) {
+
+    clearInterval(timerInterval);
+
+    const question =
+      quizQuestions[currentQuestion];
+
+    const selectedOption =
+      question.options[selectedIndex];
+
+    userAnswers[currentQuestion] =
+      selectedIndex;
+
+    const buttons =
+      document.querySelectorAll(".option");
+
+    buttons.forEach(button => {
+      button.disabled = true;
+    });
+
+
+    // Tampilkan jawaban benar
+    buttons.forEach((button, index) => {
+
+      if (question.options[index].correct) {
+
+        button.classList.add("correct");
+
+      }
+
+    });
+
+
+    const feedback =
+      document.getElementById("feedback");
+
+
+    if (selectedOption.correct) {
+
+      score++;
+
+      feedback.textContent =
+        "✅ Benar! Jawaban kamu tepat.";
+
+      feedback.className =
+        "feedback correct-feedback";
+
+    } else {
+
+      buttons[selectedIndex]
+        .classList.add("wrong");
+
+      const correctAnswer =
+        question.options.find(
+          option => option.correct
+        );
+
+      feedback.textContent =
+        `❌ Salah. Jawaban yang benar adalah: ${correctAnswer.text}`;
+
+      feedback.className =
+        "feedback wrong-feedback";
+
+    }
+
+
+    document.getElementById("nextButton")
+      .style.display = "inline-block";
+
+  }
+
+
+  // ==========================================
+  // SOAL BERIKUTNYA
+  // ==========================================
+
+  function nextQuestion() {
+
+    currentQuestion++;
+
+    if (currentQuestion >= quizQuestions.length) {
+
+      showResult();
+
+    } else {
+
+      loadQuestion();
+
+    }
+
+  }
+
+
+  // ==========================================
+  // HASIL QUIZ
+  // ==========================================
+
+  function showResult() {
+
+    clearInterval(timerInterval);
+
+    showScreen("resultScreen");
+
+    const total =
+      quizQuestions.length;
+
+    const percentage =
+      Math.round((score / total) * 100);
+
+    document.getElementById("finalScore")
+      .textContent = percentage;
+
+    document.getElementById("scoreDetail")
+      .textContent =
+      `Kamu menjawab ${score} dari ${total} soal dengan benar.`;
+
+    let message = "";
+
+    if (percentage >= 90) {
+
+      message =
+        "🏆 Luar biasa! Pengetahuan kamu sangat bagus!";
+
+    } else if (percentage >= 70) {
+
+      message =
+        "👏 Bagus! Kamu sudah memahami materi dengan baik.";
+
+    } else if (percentage >= 50) {
+
+      message =
+        "👍 Cukup baik! Terus belajar agar nilainya meningkat.";
+
+    } else {
+
+      message =
+        "📚 Jangan menyerah! Yuk belajar lagi dan coba kembali.";
+
+    }
+
+    document.getElementById("resultMessage")
+      .textContent = message;
+
+
+    showReview();
+
+  }
+
+
+  // ==========================================
+  // REVIEW JAWABAN
+  // ==========================================
+
+  function showReview() {
+
+    const container =
+      document.getElementById("reviewContainer");
+
+    container.innerHTML = "";
+
+    quizQuestions.forEach((question, index) => {
+
+      const item =
+        document.createElement("div");
+
+      item.className = "review-item";
+
+      const questionText =
+        document.createElement("div");
+
+      questionText.className =
+        "review-question";
+
+      questionText.textContent =
+        `${index + 1}. ${question.question}`;
+
+
+      const userAnswerIndex =
+        userAnswers[index];
+
+      const correctOption =
+        question.options.find(
+          option => option.correct
+        );
+
+
+      const userAnswer =
+        userAnswerIndex !== null &&
+        userAnswerIndex !== undefined
+          ? question.options[userAnswerIndex].text
+          : "Tidak menjawab";
+
+
+      const answerText =
+        document.createElement("div");
+
+      answerText.className =
+        "review-answer";
+
+
+      if (
+        userAnswerIndex !== null &&
+        userAnswerIndex !== undefined &&
+        question.options[userAnswerIndex].correct
+      ) {
+
+        answerText.innerHTML =
+          `Jawaban kamu:
+          <span class="correct-text">
+            ${userAnswer}
+          </span>`;
+
+      } else {
+
+        answerText.innerHTML =
+          `Jawaban kamu:
+          <span class="wrong-text">
+            ${userAnswer}
+          </span>`;
+
+      }
+
+
+      const correctText =
+        document.createElement("div");
+
+      correctText.className =
+        "review-answer";
+
+      correctText.innerHTML =
+        `Jawaban benar:
+        <span class="correct-text">
+          ${correctOption.text}
+        </span>`;
+
+
+      item.appendChild(questionText);
+      item.appendChild(answerText);
+      item.appendChild(correctText);
+
+      container.appendChild(item);
+
+    });
+
+  }
+
+</script>
+
+</body>
+  </html>
